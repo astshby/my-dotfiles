@@ -1,0 +1,41 @@
+{
+    // ================= 你的保留配置 =================
+    "editor.mouseWheelZoom": true,        // [保留] 鼠标滚轮缩放字体
+    "workbench.iconTheme": "material-icon-theme", // [保留] 图标主题
+    "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim", // [保留] Neovim 路径
+    "extensions.experimental.affinity": {
+        "asvetliakov.vscode-neovim": 1    // [保留] 性能优化，防止插件卡顿
+    },
+
+    // ================= 核心编辑器优化 =================
+    "editor.fontSize": 16,
+    "editor.fontFamily": "'Droid Sans Mono', 'monospace', monospace", 
+    "editor.formatOnSave": true,          // 保存时自动格式化
+    "editor.renderWhitespace": "selection", 
+    "editor.cursorBlinking": "solid",     // 实心光标不闪烁（更像 Vim）
+    "editor.cursorSmoothCaretAnimation": "on", 
+    "editor.guides.bracketPairs": true,   // 彩虹括号
+    "files.autoSave": "afterDelay",       
+    
+    // ================= Vim/Neovim 行为适配 =================
+    // 既然你在 vimrc 里设置了 tab=4，VSCode 这里也要对应设置，否则显示会对不上
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,          // 对应 expandtab
+    "editor.detectIndentation": false,    // 强制使用上面的 tab 设置
+
+    // 设置 Ctrl 快捷键交给 VSCode 处理 (复制粘贴、搜索等)
+    "vscode-neovim.ctrlKeysForInsertMode": ["a", "d", "h", "j", "k", "o", "r", "t", "w"],
+    "vscode-neovim.ctrlKeysForNormalMode": ["a", "b", "d", "e", "f", "h", "i", "j", "k", "l", "m", "o", "r", "t", "w", "/", "]"],
+
+    // ================= C/C++ 开发环境 =================
+    "makefile.configureOnOpen": true,     // 自动识别 Makefile
+    "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools", // 让 C插件 使用 Makefile 的配置
+
+    // ================= Python / Conda 环境 =================
+    "python.terminal.activateEnvironment": true, // 自动激活 Conda
+    "python.analysis.typeCheckingMode": "basic",
+
+    // ================= 翻译插件 =================
+    "commentTranslate.targetLanguage": "zh-CN",
+    "commentTranslate.hover.concise": true
+}
