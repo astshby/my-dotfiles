@@ -2,53 +2,95 @@
     // ================= 你的保留配置 =================
     "editor.mouseWheelZoom": true,
     "workbench.iconTheme": "material-icon-theme",
-    
     // ================= 平台特定路径配置 =================
-    // Linux 路径 (你原来的)
     "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
-    // Windows 路径 (关键修改)
-    // 如果你在 Windows 不装 Nvim，VS Code 会报错。
-    // 建议：在 Windows 下载一个 nvim.exe 放个位置，填在这里，哪怕你不怎么用。
-    // 或者看下文的“禁用插件法”。
     "vscode-neovim.neovimExecutablePaths.win32": "C:\\Program Files\\Neovim\\bin\\nvim.exe",
-
     "extensions.experimental.affinity": {
         "asvetliakov.vscode-neovim": 1
     },
-
-    // ================= 核心编辑器优化 =================
+    // ================= 基础编辑器优化 =================
     "editor.fontSize": 16,
-    // [修改] 增加 Consolas 和 'Courier New' 作为 Windows 的回退字体
     "editor.fontFamily": "'Droid Sans Mono', 'Consolas', 'Courier New', monospace",
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": true, // 核心：保存自动对齐代码
     "editor.renderWhitespace": "selection",
     "editor.cursorBlinking": "solid",
     "editor.cursorSmoothCaretAnimation": "on",
+    // 括号着色和引导线
     "editor.guides.bracketPairs": true,
+    "editor.bracketPairColorization.enabled": true,
     "files.autoSave": "afterDelay",
-
     // ================= Vim/Neovim 行为适配 =================
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
     "editor.detectIndentation": false,
-    
-    // 这些按键绑定在没有 Nvim 后端时可能会失效或回退到默认行为
-    "vscode-neovim.ctrlKeysForInsertMode": ["a","d","h","j","k","o","r","t","w"],
-    "vscode-neovim.ctrlKeysForNormalMode": ["a","b","d","e","f","h","i","j","k","l","m","o","r","t","w","/","]"],
-
+    "vscode-neovim.ctrlKeysForInsertMode": [
+        "a",
+        "d",
+        "h",
+        "j",
+        "k",
+        "o",
+        "r",
+        "t",
+        "w"
+    ],
+    "vscode-neovim.ctrlKeysForNormalMode": [
+        "a",
+        "b",
+        "d",
+        "e",
+        "f",
+        "h",
+        "i",
+        "j",
+        "k",
+        "l",
+        "m",
+        "o",
+        "r",
+        "t",
+        "w",
+        "/",
+        "]"
+    ],
+    // ================= Verilog 环境配置 (核心修改) =================
+    // 1. 语法检查 (Linting) - 由 mshr-h 插件提供
+    // ysyx 建议参数：-sv (支持SystemVerilog) -Wall (开启所有警告)
+    "verilog.linting.linter": "verilator",
+    "verilog.linting.verilator.arguments": "-sv -Wall --lint-only",
+    "verilog.linting.verilator.runAtFileLocation": true,
+    // 2. 格式化 (Formatting) - 由 TerosHDL 插件接管
+    // 【重要操作】：如果下面两行还爆黄，请删除冒号后的内容，把光标放在引号里，
+    // 按 "Ctrl + Space" (提示键)，在下拉列表里选择 "terostechnology.teroshdl"
+    "[verilog]": {
+        "editor.defaultFormatter": "teros-technology.teroshdl",
+        "editor.formatOnSave": true
+    },
+    "[systemverilog]": {
+        "editor.defaultFormatter": "teros-technology.teroshdl",
+        "editor.formatOnSave": true
+    },
+    // 3. TerosHDL 格式化引擎设置
+    // 我帮你改回了 "istyle"，因为 "verible" 需要手动下载二进制文件配置路径。
+    // 如果你没配置 Verible 路径，格式化会直接失效。先用 istyle 跑起来再说。
+    "teroshdl.formatter.provider": "istyle",
+    "teroshdl.formatter.style": "kr", // 风格推荐 K&R，比较紧凑
+    // ================= 解决 Windows/Linux 同步冲突 =================
+    // 这一步很关键：告诉 VS Code 同步设置时，不要同步 verilog 的 linter 设置。
+    // 这样你在 Windows 上就不会因为找不到 verilator 而报错了。
+    "settingsSync.ignoredSettings": [
+        "verilog.linting.linter"
+    ],
     // ================= C/C++ 开发环境 =================
     "makefile.configureOnOpen": true,
     "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools",
-
-    // ================= Python / Conda 环境 =================
+    // ================= Python / 杂项 =================
     "python.terminal.activateEnvironment": true,
     "python.analysis.typeCheckingMode": "basic",
-
-    // ================= 翻译插件 =================
     "commentTranslate.targetLanguage": "zh-CN",
     "commentTranslate.hover.concise": true,
     "terminal.integrated.sendKeybindingsToShell": true,
-    
-    // ================= 同步忽略 =================
-    "settingsSync.ignoredExtensions": []
+    "settingsSync.ignoredExtensions": [],
+    "terminal.integrated.inheritEnv": false,
+    "workbench.editor.empty.hint": "hidden"
 }
