@@ -115,8 +115,6 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-export NEMU_HOME=/home/hbyasts/1-ysys-PA/ysyx-workbench/nemu
-export AM_HOME=/home/hbyasts/1-ysys-PA/ysyx-workbench/abstract-machine
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -141,3 +139,25 @@ alias cman='LANG=zh_CN.UTF-8 man'
 function how() {
     tldr "$@" --repository ~/tldr-offline --language zh
 }
+
+export NEMU_HOME=/home/hbyasts/1-ysyx/ysyx-workbench/nemu
+export AM_HOME=/home/hbyasts/1-ysyx/ysyx-workbench/abstract-machine
+export PATH="/usr/lib/ccache:$PATH"
+export NPC_HOME=/home/hbyasts/1-ysyx/ysyx-workbench/npc
+export NVBOARD_HOME=/home/hbyasts/1-ysyx/ysyx-workbench/nvboard
+ysyx_env() {
+        export PATH=/home/hbyasts/1-ysyx/oss-cad-suite/bin:$PATH
+        which verilator
+    }
+
+source /home/hbyasts/tools/Xilinx/Vivado/2023.2/settings64.sh
+source /home/hbyasts/tools/Xilinx/Vitis/2023.2/settings64.sh
+source /home/hbyasts/tools/Xilinx/Vitis_HLS/2023.2/settings64.sh
+source /home/hbyasts/tools/Xilinx/Model_Composer/2023.2/settings64.sh
+export PATH=$PATH:/home/hbyasts/tools/Xilinx/DocNav/docnav
+
+export PATH=/opt/riscv/bin:$PATH
+
+eval "$(~/.local/bin/mise activate bash)"
+
+export PATH=~/.npm-global/bin:$PATH
