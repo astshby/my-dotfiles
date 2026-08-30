@@ -92,5 +92,11 @@
     "terminal.integrated.sendKeybindingsToShell": true,
     "terminal.integrated.inheritEnv": false,
     "diffEditor.maxComputationTime": 0,
-    "claudeCode.preferredLocation": "panel"
+    "claudeCode.preferredLocation": "panel",
+    "workbench.editorAssociations": {
+        "*.copilotmd": "vscode.markdown.preview.editor",
+        "{hexdiff}:/**/*.*": "hexEditor.hexedit",
+        "*.vcd": "surfer.waveformViewer"
+    },
+    "claude-history.database.storeMessages": false
 }
