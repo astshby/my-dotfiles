@@ -98,5 +98,10 @@
         "{hexdiff}:/**/*.*": "hexEditor.hexedit",
         "*.vcd": "surfer.waveformViewer"
     },
-    "claude-history.database.storeMessages": false
+    "claude-history.database.storeMessages": false,
+    "workbench.browser.showInTitleBar": false,
+    "chat.titleBar.openInAgentsWindow.enabled": false,
+    "chatgpt.runCodexInWindowsSubsystemForLinux": false,
+    "chatgpt.reviewDelivery": "inline",
+    "chatgpt.followUpQueueMode": "queue"
 }
