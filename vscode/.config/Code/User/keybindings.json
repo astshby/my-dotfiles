@@ -1,0 +1,29 @@
+[
+    // Markdown：源码右侧预览
+    {
+        "key": "ctrl+k v",
+        "command": "markdown.showPreviewToSide",
+        "when": "editorTextFocus && editorLangId == markdown"
+    },
+
+    // Typst：Tinymist 实时预览
+    {
+        "key": "ctrl+k v",
+        "command": "typst-preview.preview",
+        "when": "editorTextFocus && editorLangId == typst"
+    },
+
+    // LaTeX：右侧 PDF
+    {
+        "key": "ctrl+k v",
+        "command": "latex-workshop.view",
+        "when": "editorTextFocus && editorLangId == latex"
+    },
+
+    // LaTeX：编译
+    {
+        "key": "ctrl+k b",
+        "command": "latex-workshop.build",
+        "when": "editorTextFocus && editorLangId == latex"
+    }
+]

@@ -1,52 +1,355 @@
--- =======================================================
---  Neovim 通用配置 (Lua 版) - 适配 VSCode 与 纯终端
--- =======================================================
+-- ============================================================
+-- 基础配置
+-- ============================================================
 
--- 1. 基础设置 (对应你原来的 set ignorecase 等)
-vim.opt.ignorecase = true    -- 搜索忽略大小写
-vim.opt.smartcase = true     -- 如果搜索包含大写，则不忽略
-vim.opt.incsearch = true     -- 增量搜索 (输入时就高亮)
-vim.opt.hidden = true        -- 允许隐藏未保存的 buffer
+vim.g.mapleader = " "
 
--- 2. 剪贴板设置 (对应 set clipboard)
--- 这一步非常重要，让 Vim 的复制(y) 和系统的 Ctrl+C 互通
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.incsearch = true
+vim.opt.hlsearch = true
+
+vim.opt.hidden = true
 vim.opt.clipboard = "unnamedplus"
 
--- 3. 缩进设置 (对应你原来的 tabstop=4 等)
--- 虽然 VSCode 有自己的缩进设置，但 Neovim 内部逻辑也需要同步，
--- 否则用 > 或 < 缩进时距离会不对。
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
-vim.opt.expandtab = true     -- 将 Tab 转为空格
+vim.opt.expandtab = true
+
 vim.opt.autoindent = true
 vim.opt.smartindent = true
 
--- =======================================================
---  条件判断：VS Code 模式 vs 纯终端模式
--- =======================================================
+vim.opt.scrolloff = 4
+vim.opt.sidescrolloff = 4
+
+vim.opt.splitright = true
+vim.opt.splitbelow = true
+
+vim.opt.updatetime = 250
+vim.opt.timeoutlen = 400
+
+vim.opt.undofile = true
+
+
+-- ============================================================
+-- 独立 Neovim
+-- ============================================================
+
+if not vim.g.vscode then
+    vim.opt.number = true
+    vim.opt.ruler = true
+    vim.opt.mouse = "a"
+    vim.opt.termguicolors = true
+end
+
+
+-- ============================================================
+-- 平台判断
+-- ============================================================
+
+local is_windows = vim.fn.has("win32") == 1
+
+local uname = vim.uv.os_uname()
+local release = (uname.release or ""):lower()
+
+local is_wsl =
+    not is_windows
+    and release:find("microsoft", 1, true) ~= nil
+
+
+-- ============================================================
+-- 命令工具
+-- ============================================================
+
+local function run_sync(args)
+    local ok, proc = pcall(vim.system, args, {
+        text = true,
+    })
+
+    if not ok then
+        return nil
+    end
+
+    local result = proc:wait(500)
+
+    if result.code ~= 0 then
+        return nil
+    end
+
+    return vim.trim(result.stdout or "")
+end
+
+
+local function run_async(args)
+    pcall(function()
+        vim.system(args, {
+            text = true,
+        })
+    end)
+end
+
+
+-- ============================================================
+-- 输入法
+--
+-- Windows / WSL：
+--     AIMSwitcher
+--
+-- Linux VM：
+--     fcitx5-remote
+--
+-- 目标：
+--     Insert -> Normal：自动英文
+--     Normal -> Insert：恢复之前输入状态
+-- ============================================================
+
+local ime_backend = nil
+local ime_previous = nil
+
+
+local function detect_ime_backend()
+    -- Windows 与 WSL 优先控制 Microsoft 拼音
+    if (is_windows or is_wsl)
+        and vim.fn.executable("AIMSwitcher.exe") == 1
+    then
+        return "aim"
+    end
+
+    -- 原生 Linux 使用 Fcitx5
+    if vim.fn.executable("fcitx5-remote") == 1 then
+        return "fcitx5"
+    end
+
+    return nil
+end
+
+
+ime_backend = detect_ime_backend()
+
+
+local function ime_leave_insert()
+    if ime_backend == "aim" then
+        -- 保存 Microsoft 拼音当前模式
+        ime_previous =
+            run_sync({ "AIMSwitcher.exe", "--imm" })
+
+        -- 强制英文
+        run_async({
+            "AIMSwitcher.exe",
+            "--imm",
+            "0",
+        })
+
+        return
+    end
+
+    if ime_backend == "fcitx5" then
+        -- 0=关闭，1=inactive，2=active
+        ime_previous =
+            run_sync({ "fcitx5-remote" })
+
+        if ime_previous == "2" then
+            run_async({
+                "fcitx5-remote",
+                "-c",
+            })
+        end
+    end
+end
+
+
+local function ime_enter_insert()
+    if ime_backend == "aim" then
+        local state = tonumber(ime_previous)
+
+        -- 之前不是英文时恢复
+        if state and state ~= 0 then
+            run_async({
+                "AIMSwitcher.exe",
+                "--imm",
+                tostring(state),
+            })
+        end
+
+        return
+    end
+
+    if ime_backend == "fcitx5" then
+        -- 之前为 active 才恢复
+        if ime_previous == "2" then
+            run_async({
+                "fcitx5-remote",
+                "-o",
+            })
+        end
+    end
+end
+
+
+local function ime_force_english()
+    if ime_backend == "aim" then
+        run_async({
+            "AIMSwitcher.exe",
+            "--imm",
+            "0",
+        })
+
+        return
+    end
+
+    if ime_backend == "fcitx5" then
+        run_async({
+            "fcitx5-remote",
+            "-c",
+        })
+    end
+end
+
+
+local ime_group =
+    vim.api.nvim_create_augroup(
+        "AutoInputMethod",
+        { clear = true }
+    )
+
+
+vim.api.nvim_create_autocmd(
+    "InsertLeave",
+    {
+        group = ime_group,
+        callback = ime_leave_insert,
+    }
+)
+
+
+vim.api.nvim_create_autocmd(
+    "InsertEnter",
+    {
+        group = ime_group,
+        callback = ime_enter_insert,
+    }
+)
+
+
+vim.api.nvim_create_autocmd(
+    "VimEnter",
+    {
+        group = ime_group,
+        callback = ime_force_english,
+    }
+)
+
+
+vim.api.nvim_create_autocmd(
+    "FocusGained",
+    {
+        group = ime_group,
+
+        callback = function()
+            if vim.fn.mode():sub(1, 1) ~= "i" then
+                ime_force_english()
+            end
+        end,
+    }
+)
+
+
+-- ============================================================
+-- VSCode Neovim
+-- ============================================================
+
 if vim.g.vscode then
-    -- [[ VS Code 特有设置 ]]
-    -- 在 VS Code 里，我们要禁用高亮和行号，因为 VS Code 已经有了
-    -- 如果 Neovim 也渲染，会重叠或者变卡
-    
-    -- 这里的按键映射是为了让你在 VS Code 里用 Vim 键位调用 GUI 功能
-    -- 例如：按 <空格>rn 调用 VS Code 的重命名功能
-    vim.g.mapleader = " "
-    
-    -- 映射：空格 + rn -> 重命名变量
-    vim.keymap.set('n', '<leader>rn', function() vim.fn.VSCodeNotify('editor.action.rename') end)
-    -- 映射：空格 + gd -> 跳转定义 (Go Definition)
-    vim.keymap.set('n', '<leader>gd', function() vim.fn.VSCodeNotify('editor.action.revealDefinition') end)
-    
-else
-    -- [[ 纯终端 Neovim 特有设置 ]]
-    -- 当你直接在终端输 nvim 时，这些才会生效
-    
-    vim.opt.number = true           -- 显示行号
-    vim.opt.ruler = true            -- 显示标尺
-    vim.opt.syntax = "on"           -- 开启语法高亮
-    vim.opt.background = "dark"     -- 背景色
-    
-    -- 你原来的 backspace 设置默认在 Neovim 里已经是这样了，不用特意写
+    local vscode = require("vscode")
+
+    -- 重命名
+    vim.keymap.set(
+        "n",
+        "<leader>rn",
+
+        function()
+            vscode.action(
+                "editor.action.rename"
+            )
+        end,
+
+        {
+            silent = true,
+            desc = "重命名",
+        }
+    )
+
+
+    -- 跳转定义
+    vim.keymap.set(
+        "n",
+        "<leader>gd",
+
+        function()
+            vscode.action(
+                "editor.action.revealDefinition"
+            )
+        end,
+
+        {
+            silent = true,
+            desc = "跳转定义",
+        }
+    )
+
+
+    -- 文档统一预览
+    vim.keymap.set(
+        "n",
+        "<leader>p",
+
+        function()
+            local ext =
+                vim.fn.expand("%:e"):lower()
+
+            if ext == "md" then
+                vscode.action(
+                    "markdown.showPreviewToSide"
+                )
+
+            elseif ext == "typ" then
+                vscode.action(
+                    "typst-preview.preview"
+                )
+
+            elseif ext == "tex" then
+                vscode.action(
+                    "latex-workshop.view"
+                )
+            end
+        end,
+
+        {
+            silent = true,
+            desc = "预览文档",
+        }
+    )
+
+
+    -- LaTeX 编译
+    vim.keymap.set(
+        "n",
+        "<leader>b",
+
+        function()
+            local ext =
+                vim.fn.expand("%:e"):lower()
+
+            if ext == "tex" then
+                vscode.action(
+                    "latex-workshop.build"
+                )
+            end
+        end,
+
+        {
+            silent = true,
+            desc = "编译 LaTeX",
+        }
+    )
 end

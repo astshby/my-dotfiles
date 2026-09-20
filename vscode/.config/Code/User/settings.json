@@ -1,14 +1,7 @@
 {
-    // ================= 你的保留配置 =================
+    // ================= 基础界面 =================
     "editor.mouseWheelZoom": true,
     "workbench.iconTheme": "material-icon-theme",
-    // ================= 平台特定路径配置 =================
-    "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
-    "vscode-neovim.neovimExecutablePaths.win32": "C:\\Program Files\\Neovim\\bin\\nvim.exe",
-    "extensions.experimental.affinity": {
-        "asvetliakov.vscode-neovim": 1
-    },
-    // ================= 基础编辑器优化 =================
     "editor.fontSize": 16,
     "editor.fontFamily": "'Droid Sans Mono', 'Consolas', 'Courier New', monospace",
     "editor.formatOnSave": true,
@@ -17,26 +10,30 @@
     "editor.cursorSmoothCaretAnimation": "on",
     "editor.guides.bracketPairs": true,
     "editor.bracketPairColorization.enabled": true,
-    "files.autoSave": "afterDelay",
-    "workbench.editor.empty.hint": "hidden",
-    "editor.largeFileOptimizations": false,
-    // ================= Vim/Neovim 行为适配 (绝对优先) =================
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
     "editor.detectIndentation": false,
-    // Insert 模式下放行部分键位，以便使用终端习惯 (如 Ctrl+W 删词, Ctrl+H 退格)
+    "files.autoSave": "afterDelay",
+    "workbench.editor.empty.hint": "hidden",
+    "editor.largeFileOptimizations": false,
+    "diffEditor.maxComputationTime": 0,
+    // ================= VSCode Neovim =================
+    "vscode-neovim.neovimExecutablePaths.win32": "C:\\Program Files\\Neovim\\bin\\nvim.exe",
+    "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
+    "extensions.experimental.affinity": {
+        "asvetliakov.vscode-neovim": 1
+    },
+    // Ctrl+K 故意留给 VS Code
     "vscode-neovim.ctrlKeysForInsertMode": [
         "a",
         "d",
         "h",
         "j",
-        "k",
         "o",
         "r",
         "t",
         "w"
     ],
-    // Normal 模式下实施全面接管
     "vscode-neovim.ctrlKeysForNormalMode": [
         "a",
         "b",
@@ -47,7 +44,6 @@
         "h",
         "i",
         "j",
-        "k",
         "l",
         "m",
         "o",
@@ -62,46 +58,58 @@
         "/",
         "]"
     ],
-    // ================= Verilog 环境配置 =================
+    // ================= 终端 =================
     "verilog.linting.linter": "verilator",
-    "verilog.linting.verilator.arguments": "-sv -Wall --lint-only",
+    "terminal.integrated.inheritEnv": true,
+    "terminal.integrated.sendKeybindingsToShell": true,
+    "verilog.linting.verilator.arguments": "-sv -Wall",
     "verilog.linting.verilator.runAtFileLocation": true,
     "[verilog]": {
-        "editor.defaultFormatter": "teros-technology.teroshdl",
+        "editor.defaultFormatter": "mshr-h.veriloghdl",
         "editor.formatOnSave": false
     },
     "[systemverilog]": {
-        "editor.defaultFormatter": "teros-technology.teroshdl",
+        "editor.defaultFormatter": "mshr-h.veriloghdl",
         "editor.formatOnSave": false
     },
-    "teroshdl.formatter.provider": "istyle",
-    "teroshdl.formatter.style": "kr",
-    // ================= 解决 Windows/Linux 同步冲突 =================
-    "settingsSync.ignoredSettings": [
-        "verilog.linting.linter"
-    ],
-    "settingsSync.ignoredExtensions": [],
-    // ================= C/C++ 开发环境 =================
+    // VCD 使用 Verilog-HDL 扩展内置 Fliplot
+    "verilog.waveform.viewer": "fliplot",
+    // ================= C / C++ =================
     "makefile.configureOnOpen": true,
     "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools",
-    // ================= Python / 终端 / 杂项 =================
+    // ================= Python =================
     "python.terminal.activateEnvironment": true,
     "python.analysis.typeCheckingMode": "basic",
+    "python.defaultInterpreterPath": "/home/hbyasts/anaconda3/bin/python",
+    "markdown.extension.preview.autoShowPreviewToSide": false,
+    // ================= Typst =================
+    "[typst]": {
+        "editor.defaultFormatter": "myriad-dreamin.tinymist",
+        "editor.formatOnSave": true
+    },
+    "tinymist.formatterMode": "typstyle",
+    "tinymist.systemFonts": true,
+    // ================= LaTeX =================
+    "latex-workshop.view.pdf.viewer": "tab",
+    "latex-workshop.view.pdf.tab.editorGroup": "right",
+    // ================= 翻译 =================
     "commentTranslate.targetLanguage": "zh-CN",
     "commentTranslate.hover.concise": true,
-    "terminal.integrated.sendKeybindingsToShell": true,
-    "terminal.integrated.inheritEnv": false,
-    "diffEditor.maxComputationTime": 0,
+    // ================= AI =================
     "claudeCode.preferredLocation": "panel",
+    "chat.titleBar.openInAgentsWindow.enabled": false,
+    "chatgpt.runCodexInWindowsSubsystemForLinux": true,
+    "chatgpt.reviewDelivery": "inline",
+    "chatgpt.followUpQueueMode": "queue",
+    "claude-history.database.storeMessages": false,
+    // ================= 文件关联 =================
     "workbench.editorAssociations": {
         "*.copilotmd": "vscode.markdown.preview.editor",
-        "{hexdiff}:/**/*.*": "hexEditor.hexedit",
-        "*.vcd": "surfer.waveformViewer"
+        "{hexdiff}:/**/*.*": "hexEditor.hexedit"
     },
-    "claude-history.database.storeMessages": false,
-    "workbench.browser.showInTitleBar": false,
-    "chat.titleBar.openInAgentsWindow.enabled": false,
-    "chatgpt.runCodexInWindowsSubsystemForLinux": false,
-    "chatgpt.reviewDelivery": "inline",
-    "chatgpt.followUpQueueMode": "queue"
+    // ================= Settings Sync =================
+    "settingsSync.ignoredSettings": [],
+    "settingsSync.ignoredExtensions": [],
+    // ================= 杂项 =================
+    "workbench.browser.showInTitleBar": false
 }
