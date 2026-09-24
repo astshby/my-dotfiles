@@ -105,11 +105,15 @@
     // ================= 文件关联 =================
     "workbench.editorAssociations": {
         "*.copilotmd": "vscode.markdown.preview.editor",
-        "{hexdiff}:/**/*.*": "hexEditor.hexedit"
+        "{hexdiff}:/**/*.*": "hexEditor.hexedit",
+        "*.pdf": "pdf.preview"
     },
     // ================= Settings Sync =================
     "settingsSync.ignoredSettings": [],
     "settingsSync.ignoredExtensions": [],
     // ================= 杂项 =================
-    "workbench.browser.showInTitleBar": false
+    "workbench.browser.showInTitleBar": false,
+    "security.allowedUNCHosts": [
+        "wsl.localhost"
+    ]
 }
